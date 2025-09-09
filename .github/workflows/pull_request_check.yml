@@ -18,7 +18,23 @@ jobs:
       - name: 🟣 Installera .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'  # Ändra vid behov
+          dotnet-version: '9.0.x'
 
       - name: 🛠️ Bygg projektet
         run: dotnet build --configuration Release
+
+      - name: 📣 Skicka Discord-notis (på lyckad build)
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"username\": \"GitHub Actions 🤖\", \"content\": \"✅ Build lyckades för PR [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }}) i **${{ github.repository }}**.\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: ❌ Skicka Discord-notis (vid misslyckad build)
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"username\": \"GitHub Actions 🤖\", \"content\": \"❌ Build **misslyckades** för PR [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }}) i **${{ github.repository }}**.\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
