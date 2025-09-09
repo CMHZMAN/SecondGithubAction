@@ -18,7 +18,7 @@ jobs:
       - name: 🟣 Installera .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'  # Ändra vid behov
+          dotnet-version: '9.0.x'  # Ändra vid behov
 
       - name: 🛠️ Bygg projektet
         run: dotnet build --configuration Release
